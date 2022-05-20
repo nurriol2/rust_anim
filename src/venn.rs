@@ -2,25 +2,17 @@ use nannou::prelude::*;
 
 #[derive(Debug)]
 pub struct VennCircle {
-    //pub center: (f32, f32),
+    // TODO:  Are all these pubs for the fields neccessary? I think so.
     pub center: Vec2,
     pub radius: f32,
     pub stroke_weight: f32,
-    pub stroke_color: rgb::Rgb,
+    pub stroke_color: rgb::Rgb, // HACK:  Color is annoying to work with so this is a workaround
+    pub velocity: Vec2,
+    pub acceleration: Vec2
 }
 
 impl VennCircle {
-    // TODO:  Rewrite or remove. This is annoying to use
-    pub fn new(center: Vec2, radius: f32, stroke_weight: f32, stroke_color: rgb::Rgb) -> VennCircle {
-        VennCircle {
-            center,
-            radius,
-            stroke_weight,
-            stroke_color,
-        }
-    }
-
-    pub fn update_radius(&mut self, new_radius: f32){
+    pub fn update_radius(&mut self, new_radius: f32) {
         self.radius = new_radius;
     }
 
@@ -33,42 +25,32 @@ impl VennCircle {
             .stroke_weight(self.stroke_weight)
             .no_fill();
     }
+
+    pub fn update_position(&mut self, dt: f32){
+        self.center += self.velocity * dt;
+    }
 }
 
-// pub trait Breathing {
-//     // Oscillate the circumfernce of a circle to get a breathing effect
-//     fn breathe(&mut self, app: &App, draw: &Draw, rate: f32, radius_min: f32, radius_max: f32);
-// }
+impl Default for VennCircle {
+    fn default() -> VennCircle {
+        VennCircle {
+            center: Vec2::new(0.0, 0.0),
+            radius: 40.0,
+            stroke_weight: 15.0,
+            stroke_color: rgb::Rgb::new(0.0, 255.0, 0.0),
+            velocity: Vec2::new(0.0, 0.0),
+            acceleration: Vec2::new(0.0, 0.0),
+        }
+    }
+}
 
 pub trait Breathing {
     // Oscillate the circumfernce of a circle to get a breathing effect
     fn breathe(&mut self, app: &App, rate: f32, radius_min: f32, radius_max: f32);
 }
 
-
-impl Default for VennCircle{
-    fn default() -> VennCircle{
-        VennCircle {
-            center: Vec2::new(0.0, 0.0),
-            radius: 40.0,
-            stroke_weight: 15.0,
-            stroke_color: rgb::Rgb::new(0.0, 255.0, 0.0),
-        }        
-    }
-}
-
-// impl Breathing for VennCircle{
-//     fn breathe(&mut self, app: &App, draw: &Draw, rate: f32, radius_min: f32, radius_max: f32){
-//         let time: f32 = app.elapsed_frames() as f32 / 60.0;
-//         let oscillation: f32 = (time * rate).sin();
-//         let current_radius = map_range(oscillation, -1.0, 1.0, radius_min, radius_max);
-//         self.update_radius(current_radius);
-//         self.paint_to(draw);
-//     }
-// }
-
-impl Breathing for VennCircle{
-    fn breathe(&mut self, app: &App, rate: f32, radius_min: f32, radius_max: f32){
+impl Breathing for VennCircle {
+    fn breathe(&mut self, app: &App, rate: f32, radius_min: f32, radius_max: f32) {
         let time: f32 = app.elapsed_frames() as f32 / 60.0;
         let oscillation: f32 = (time * rate).sin();
         let current_radius = map_range(oscillation, -1.0, 1.0, radius_min, radius_max);
