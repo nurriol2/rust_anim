@@ -26,7 +26,7 @@ fn model(app: &App) -> Model {
 
     // Set up 2 breathing circles
     let sat_a: VennCircle = VennCircle::default();
-    let sat_b: VennCircle = VennCircle{center: (50.0, -50.0), ..Default::default()};
+    let sat_b: VennCircle = VennCircle{center: Vec2::new(50.0, -50.0), ..Default::default()};
     
     let sats: Vec<VennCircle> = vec![sat_a, sat_b];
 

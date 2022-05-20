@@ -2,7 +2,8 @@ use nannou::prelude::*;
 
 #[derive(Debug)]
 pub struct VennCircle {
-    pub center: (f32, f32),
+    //pub center: (f32, f32),
+    pub center: Vec2,
     pub radius: f32,
     pub stroke_weight: f32,
     pub stroke_color: rgb::Rgb,
@@ -10,7 +11,7 @@ pub struct VennCircle {
 
 impl VennCircle {
     // TODO:  Rewrite or remove. This is annoying to use
-    pub fn new(center: (f32, f32), radius: f32, stroke_weight: f32, stroke_color: rgb::Rgb) -> VennCircle {
+    pub fn new(center: Vec2, radius: f32, stroke_weight: f32, stroke_color: rgb::Rgb) -> VennCircle {
         VennCircle {
             center,
             radius,
@@ -25,8 +26,8 @@ impl VennCircle {
 
     pub fn paint_to(&self, draw: &Draw) {
         draw.ellipse()
-            .x(self.center.0)
-            .y(self.center.1)
+            .x(self.center.x)
+            .y(self.center.y)
             .radius(self.radius)
             .stroke(self.stroke_color)
             .stroke_weight(self.stroke_weight)
@@ -48,7 +49,7 @@ pub trait Breathing {
 impl Default for VennCircle{
     fn default() -> VennCircle{
         VennCircle {
-            center: (0.0, 0.0),
+            center: Vec2::new(0.0, 0.0),
             radius: 40.0,
             stroke_weight: 15.0,
             stroke_color: rgb::Rgb::new(0.0, 255.0, 0.0),
