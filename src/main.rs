@@ -26,7 +26,10 @@ fn model(app: &App) -> Model {
 
     // Set up 2 breathing circles
     let sat_a: VennCircle = VennCircle::default();
-    let sat_b: VennCircle = VennCircle{center: Vec2::new(50.0, -50.0), ..Default::default()};
+    // This circle should move while breathing
+    let sat_b: VennCircle = VennCircle{center: Vec2::new(50.0, -50.0),
+                                        velocity: Vec2::new(1.0, 1.0),
+                                        ..Default::default()};
     
     let sats: Vec<VennCircle> = vec![sat_a, sat_b];
 
@@ -51,12 +54,16 @@ fn view(app: &App, model: &Model, frame: Frame) {
 
 fn update(app: &App, model: &mut Model, _update: Update){
     
+    let dt: f32 = app.elapsed_frames() as f32 / 60.0;
+    
     // Make many breathing satellites
     let rate: f32 = 4.0;
     let radius_min: f32 = 75.0;
     let radius_max: f32 = 100.0;
     for satellite in model.satellites.iter_mut(){
         satellite.breathe(app, rate, radius_min, radius_max);
+        satellite.update_position(dt);
     }
+
 
 }
