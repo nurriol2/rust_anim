@@ -29,6 +29,20 @@ impl VennCircle {
     pub fn update_position(&mut self, dt: f32){
         self.center += self.velocity * dt;
     }
+
+    pub fn update_velocity(&mut self, dt: f32){
+        
+        // Handles G*m1*m2
+        const ATTRACTION: f32 = 1.0;
+
+        let attractor_position: Vec2 = Vec2::new(0.0, 0.0);
+
+        let rsq_recip: f32 = self.center.length_recip();
+        let force_direction: Vec2 = (attractor_position - self.center).normalize();
+        let acceleration: Vec2 = force_direction * ATTRACTION *rsq_recip;
+        self.velocity += acceleration * dt;
+
+    }
 }
 
 impl Default for VennCircle {
