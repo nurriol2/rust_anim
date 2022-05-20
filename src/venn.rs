@@ -8,13 +8,8 @@ pub struct VennCircle {
     pub stroke_color: rgb::Rgb,
 }
 
-
-pub trait Breathing {
-    // Oscillate the circumfernce of a circle to get a breathing effect
-    fn breathe(&mut self, app: &App, draw: &Draw, rate: f32, radius_min: f32, radius_max: f32);
-}
-
 impl VennCircle {
+    // TODO:  Rewrite or remove. This is annoying to use
     pub fn new(center: (f32, f32), radius: f32, stroke_weight: f32, stroke_color: rgb::Rgb) -> VennCircle {
         VennCircle {
             center,
@@ -39,6 +34,17 @@ impl VennCircle {
     }
 }
 
+// pub trait Breathing {
+//     // Oscillate the circumfernce of a circle to get a breathing effect
+//     fn breathe(&mut self, app: &App, draw: &Draw, rate: f32, radius_min: f32, radius_max: f32);
+// }
+
+pub trait Breathing {
+    // Oscillate the circumfernce of a circle to get a breathing effect
+    fn breathe(&mut self, app: &App, rate: f32, radius_min: f32, radius_max: f32);
+}
+
+
 impl Default for VennCircle{
     fn default() -> VennCircle{
         VennCircle {
@@ -50,11 +56,21 @@ impl Default for VennCircle{
     }
 }
 
+// impl Breathing for VennCircle{
+//     fn breathe(&mut self, app: &App, draw: &Draw, rate: f32, radius_min: f32, radius_max: f32){
+//         let time: f32 = app.elapsed_frames() as f32 / 60.0;
+//         let oscillation: f32 = (time * rate).sin();
+//         let current_radius = map_range(oscillation, -1.0, 1.0, radius_min, radius_max);
+//         self.update_radius(current_radius);
+//         self.paint_to(draw);
+//     }
+// }
+
 impl Breathing for VennCircle{
-    fn breathe(&mut self, app: &App, draw: &Draw, rate: f32, radius_min: f32, radius_max: f32){
-        let oscillation: f32 = (app.time * rate).sin();
+    fn breathe(&mut self, app: &App, rate: f32, radius_min: f32, radius_max: f32){
+        let time: f32 = app.elapsed_frames() as f32 / 60.0;
+        let oscillation: f32 = (time * rate).sin();
         let current_radius = map_range(oscillation, -1.0, 1.0, radius_min, radius_max);
         self.update_radius(current_radius);
-        self.paint_to(draw);
     }
 }
