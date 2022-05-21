@@ -113,4 +113,12 @@ fn update(app: &App, model: &mut Model, _update: Update) {
         satellite.update_velocity(dt);
     }
     
+    // HACK:  Artificially set a speed limit
+    for satellite in model.satellites.iter_mut(){
+        if (dt as i32 != 0) && (dt as i32) % 15 == 0{
+            satellite.velocity *= 0.1;
+            println!("Slowing down!")
+        } 
+    }
+
 }
