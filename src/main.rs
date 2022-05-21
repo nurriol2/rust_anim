@@ -1,4 +1,5 @@
 #![allow(dead_code)]
+#![allow(unused_variables)]
 
 mod venn;
 
@@ -25,7 +26,7 @@ fn model(app: &App) -> Model {
 
     // Starting distance of the initial satellite configuration
     let starting_distance: f32 = 125.0;
-    let stroke_weight: f32 = 5.0;
+    let stroke_weight: f32 = 3.0;
 
     // Initial positions
     let north: Vec2 = Vec2::new(0.0, starting_distance);
@@ -68,7 +69,8 @@ fn model(app: &App) -> Model {
         ..Default::default()
     };
 
-    let sats: Vec<VennCircle> = vec![north_sat, south_sat, east_sat, west_sat];
+    //let sats: Vec<VennCircle> = vec![north_sat, south_sat, east_sat, west_sat];
+    let sats = vec![north_sat];
 
     Model { satellites: sats }
 }
@@ -79,6 +81,13 @@ fn view(app: &App, model: &Model, frame: Frame) {
     // Clear the canvas before each tick
     draw.background().color(BLACK);
 
+    // Draw a marker at the center
+    draw.rect()
+        .color(RED)
+        .xy(Vec2::new(0.0, 0.0))
+        .w(20.0)
+        .h(20.0);
+
     // Draw the satellites
     for satellite in model.satellites.iter() {
         satellite.paint_to(&draw);
@@ -88,12 +97,12 @@ fn view(app: &App, model: &Model, frame: Frame) {
 }
 
 fn update(app: &App, model: &mut Model, _update: Update) {
-    let dt: f32 = app.elapsed_frames() as f32 / 60.0;
+    let dt: f32 = app.elapsed_frames() as f32 / 1200.0;
 
     // Make breathing satellites
     let rate: f32 = 4.0;
-    let radius_min: f32 = 25.0;
-    let radius_max: f32 = 35.0;
+    let radius_min: f32 = 15.0;
+    let radius_max: f32 = 20.0;
     for satellite in model.satellites.iter_mut() {
         satellite.breathe(app, rate, radius_min, radius_max);
     }
