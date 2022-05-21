@@ -8,7 +8,7 @@ pub struct VennCircle {
     pub stroke_weight: f32,
     pub stroke_color: rgb::Rgb, // HACK:  Color is annoying to work with so this is a workaround
     pub velocity: Vec2,
-    pub acceleration: Vec2
+    pub acceleration: Vec2,
 }
 
 impl VennCircle {
@@ -26,12 +26,11 @@ impl VennCircle {
             .no_fill();
     }
 
-    pub fn update_position(&mut self, dt: f32){
+    pub fn update_position(&mut self, dt: f32) {
         self.center += self.velocity * dt;
     }
 
-    pub fn update_velocity(&mut self, dt: f32){
-        
+    pub fn update_velocity(&mut self, dt: f32) {
         // Handles G*m1*m2
         const ATTRACTION: f32 = 1.0;
 
@@ -39,9 +38,8 @@ impl VennCircle {
 
         let rsq_recip: f32 = self.center.length_recip();
         let force_direction: Vec2 = (attractor_position - self.center).normalize();
-        let acceleration: Vec2 = force_direction * ATTRACTION *rsq_recip;
+        let acceleration: Vec2 = force_direction * ATTRACTION * rsq_recip;
         self.velocity += acceleration * dt;
-
     }
 }
 
