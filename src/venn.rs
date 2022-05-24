@@ -7,13 +7,25 @@ pub struct VennCircle {
     pub radius: f32,
     pub stroke_weight: f32,
     pub stroke_color: rgb::Rgb, // HACK:  Color is annoying to work with so this is a workaround
-    pub velocity: Vec2,
-    pub acceleration: Vec2,
+    pub current_velocity: Vec2,
 }
 
 impl VennCircle {
     pub fn update_radius(&mut self, new_radius: f32) {
         self.radius = new_radius;
+    }
+
+    pub fn update_position(&mut self, dt: f32){
+        self.center += self.current_velocity * dt;
+    }
+
+    // Calculation of a circular orbit
+    pub fn update_velocity(&mut self, dt: f32, gravity: f32){
+        let origin = Vec2::new(0.0, 0.0);
+        let rsq = (origin - self.center).length_squared();
+        let force_dir = (origin - self.center).normalize_or_zero();
+        let acceleration = force_dir * gravity / rsq;
+        self.current_velocity += acceleration * dt;
     }
 
     pub fn paint_to(&self, draw: &Draw) {
@@ -25,34 +37,16 @@ impl VennCircle {
             .stroke_weight(self.stroke_weight)
             .no_fill();
     }
-
-    pub fn update_position(&mut self, dt: f32) {
-        self.center += self.velocity * dt;
-    }
-
-    pub fn update_velocity(&mut self, dt: f32) {
-        // Handles G*m1*m2
-        const ATTRACTION: f32 = 1.0;
-        let attractor_position: Vec2 = Vec2::new(0.0, 0.0);
-
-        let rsq_recip: f32 = self.center.length_recip();
-        let force_direction: Vec2 = (attractor_position - self.center).normalize();
-        let acceleration: Vec2 = force_direction * ATTRACTION * rsq_recip;
-
-        self.velocity += acceleration * dt;
-
-    }
 }
 
 impl Default for VennCircle {
     fn default() -> VennCircle {
         VennCircle {
-            center: Vec2::new(0.0, 0.0),
+            center: Vec2::new(0.0, 100.0),
             radius: 40.0,
-            stroke_weight: 15.0,
+            stroke_weight: 3.0,
             stroke_color: rgb::Rgb::new(0.0, 255.0, 0.0),
-            velocity: Vec2::new(0.0, 0.0),
-            acceleration: Vec2::new(0.0, 0.0),
+            current_velocity: Vec2::new(0.0, 0.0), 
         }
     }
 }
