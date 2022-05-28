@@ -4,10 +4,11 @@ use nannou::prelude::*;
 pub struct VennCircle {
     // TODO:  Are all these pubs for the fields neccessary? I think so.
     pub center: Vec2,
+    pub initial_position: Vec2,
     pub radius: f32,
     pub stroke_weight: f32,
     pub stroke_color: rgb::Rgb, // HACK:  Color is annoying to work with so this is a workaround
-    pub current_velocity: Vec2,
+    pub speed: f32,
 }
 
 impl VennCircle {
@@ -15,17 +16,16 @@ impl VennCircle {
         self.radius = new_radius;
     }
 
-    pub fn update_position(&mut self, dt: f32){
-        self.center += self.current_velocity * dt;
+    pub fn line_to_origin(&mut self, speed: f32){
+        let origin: Vec2 = Vec2::new(0., 0.);
+        let direction_heading = (origin - self.center).normalize_or_zero();
+        self.center += speed * direction_heading;
     }
 
-    // Calculation of a circular orbit
-    pub fn update_velocity(&mut self, dt: f32, gravity: f32){
-        let origin = Vec2::new(0.0, 0.0);
-        let rsq = (origin - self.center).length_squared();
-        let force_dir = (origin - self.center).normalize_or_zero();
-        let acceleration = force_dir * gravity / rsq;
-        self.current_velocity += acceleration * dt;
+    pub fn orbit(&mut self, radius: f32, dt: f32, phi: f32){
+        let x = radius * ((self.speed * dt) - phi).cos();
+        let y = radius * ((self.speed * dt) - phi).sin();
+        self.center = Vec2::new(x, y);
     }
 
     pub fn paint_to(&self, draw: &Draw) {
@@ -37,22 +37,24 @@ impl VennCircle {
             .stroke_weight(self.stroke_weight)
             .no_fill();
     }
+
 }
 
 impl Default for VennCircle {
     fn default() -> VennCircle {
         VennCircle {
             center: Vec2::new(0.0, 100.0),
+            initial_position: Vec2::new(0.0, 100.0),
             radius: 40.0,
             stroke_weight: 3.0,
             stroke_color: rgb::Rgb::new(0.0, 255.0, 0.0),
-            current_velocity: Vec2::new(0.0, 0.0), 
+            speed: 2.0,
         }
     }
 }
 
 pub trait Breathing {
-    // Oscillate the circumfernce of a circle to get a breathing effect
+    // Oscillate the radius of a circle to get a breathing effect
     fn breathe(&mut self, app: &App, rate: f32, radius_min: f32, radius_max: f32);
 }
 
