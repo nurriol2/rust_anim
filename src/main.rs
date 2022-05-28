@@ -73,29 +73,31 @@ fn view(app: &App, model: &Model, frame: Frame) {
 
 fn update(app: &App, model: &mut Model, _update: Update) {
     //let dt: f32 = app.elapsed_frames() as f32 / 1200.0;
-    let dt: f32 = app.elapsed_frames() as f32 / 2400.0;
+    let dt: f32 = app.elapsed_frames() as f32 / 600.0;
 
 
     // Compound motion hack
     for circle in model.circles.iter_mut(){
-        
-        // Linear motion parameters
-        let origin = Vec2::new(0., 0.);
-        let speed = 2.0;
 
-        // Breathing parameters
-        let rate: f32 = 4.0;
-        let radius_min: f32 = 15.0;
-        let radius_max: f32 = 20.0;
+        let omega = 25.0;
+        let r = time_dep_radius(200., 40., 1., dt);
 
-        if circle.center.distance(origin) > 100.0{
-            circle.line_to_origin(speed);
-        } else {
-            let phi = -circle.initial_position.angle();
-            circle.orbit(99.0, dt, phi);
-            circle.breathe(app, rate, radius_min, radius_max)
-        }
+        let x = r * (omega * dt).cos();
+        let y = r * (omega * dt).sin();
+        let new_center = Vec2::new(x, y);
 
-        
+        circle.center = new_center;
     }
+}
+
+fn time_dep_radius(r_start: f32, r_const: f32, t_star: f32, dt: f32) -> f32{
+
+    if dt < t_star{
+        let slope = (r_const - r_start) / t_star;
+        (slope * dt) + r_start
+    } else {
+        r_const
+    }
+
+
 }

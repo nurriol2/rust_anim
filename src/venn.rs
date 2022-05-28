@@ -16,17 +16,7 @@ impl VennCircle {
         self.radius = new_radius;
     }
 
-    pub fn line_to_origin(&mut self, speed: f32){
-        let origin: Vec2 = Vec2::new(0., 0.);
-        let direction_heading = (origin - self.center).normalize_or_zero();
-        self.center += speed * direction_heading;
-    }
-
-    pub fn orbit(&mut self, radius: f32, dt: f32, phi: f32){
-        let x = radius * ((self.speed * dt) - phi).cos();
-        let y = radius * ((self.speed * dt) - phi).sin();
-        self.center = Vec2::new(x, y);
-    }
+    
 
     pub fn paint_to(&self, draw: &Draw) {
         draw.ellipse()
